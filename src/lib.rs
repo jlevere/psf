@@ -14,6 +14,8 @@
 //! stream straight to `msdelta` to reconstruct the target file.
 #![forbid(unsafe_code)]
 
+pub mod cix;
+
 use thiserror::Error;
 
 /// PSTREAM file magic (`"PSTREAM\0"`).
@@ -34,6 +36,8 @@ pub enum Error {
         length: u64,
         size: usize,
     },
+    #[error("CIX parse error: {0}")]
+    Cix(String),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;

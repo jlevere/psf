@@ -12,3 +12,5 @@ keywords = ["windows", "update", "psf", "express", "delta"]
 
 [dependencies]
 thiserror = { workspace = true }
+yaserde = { workspace = true }
+yaserde_derive = { workspace = true }
