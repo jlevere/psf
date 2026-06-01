@@ -1,0 +1,14 @@
+[package]
+name = "psf"
+description = "Pure-Rust extractor for Microsoft Patch Storage Files (PSF / express download update payloads)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+categories = ["parser-implementations", "os::windows-apis"]
+keywords = ["windows", "update", "psf", "express", "delta"]
+
+[dependencies]
+thiserror = { workspace = true }
