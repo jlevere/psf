@@ -1,16 +1,23 @@
+[workspace]
+resolver = "2"
+
 [package]
 name = "psf"
-description = "Pure-Rust extractor for Microsoft Patch Storage Files (PSF / express download update payloads)."
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-repository.workspace = true
-authors.workspace = true
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/jlevere/psf"
+authors = ["Jackson Leverett <jacksonleverett@gmail.com>"]
+description = "Pure-Rust reader for Microsoft Patch Storage Files (PSTREAM / express download update payloads) and their Container Index (CIX)."
 categories = ["parser-implementations", "os::windows-apis"]
 keywords = ["windows", "update", "psf", "express", "delta"]
 
 [dependencies]
-thiserror = { workspace = true }
-yaserde = { workspace = true }
-yaserde_derive = { workspace = true }
+thiserror = "2"
+yaserde = "0.12"
+yaserde_derive = "0.12"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
