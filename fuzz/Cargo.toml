@@ -13,11 +13,17 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
+arbitrary = { version = "1", features = ["derive"] }
 
 [dependencies.psf]
 path = ".."
 # The reader target needs the Read+Seek adapter.
 features = ["io"]
+
+# Structure-aware CIX model shared by the generative target.
+[lib]
+name = "psf_fuzz"
+path = "src/lib.rs"
 
 [[bin]]
 name = "fuzz_psf"
@@ -29,6 +35,13 @@ bench = false
 [[bin]]
 name = "fuzz_cix"
 path = "fuzz_targets/fuzz_cix.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_cix_structured"
+path = "fuzz_targets/fuzz_cix_structured.rs"
 test = false
 doc = false
 bench = false

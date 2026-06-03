@@ -32,6 +32,19 @@ cat >"$here/corpus/fuzz_cix/sample.xml" <<'XML'
 </Files></Container>
 XML
 
+# CIX raw-bytes target: mutating genuine manifests reaches structure the byte
+# mutator can't synthesize. Real manifests are gitignored; seed from $UUP_CIX
+# and any tests/fixtures/*.cix.xml when present. (The structured target builds
+# its own valid XML from an Arbitrary model, so it needs no seeds.)
+if [ -n "${UUP_CIX:-}" ] && [ -e "${UUP_CIX}" ]; then
+  cp -f "$UUP_CIX" "$here/corpus/fuzz_cix/"
+fi
+if [ -d "$root/tests/fixtures" ]; then
+  for f in "$root"/tests/fixtures/*.cix.xml; do
+    [ -e "$f" ] && cp -f "$f" "$here/corpus/fuzz_cix/"
+  done
+fi
+
 # PSTREAM byte targets: real .psf containers are gitignored and not redistributable.
 # Seed from $UUP_PSF_FIXTURE and tests/fixtures when present; no-op otherwise.
 seed_psf() {
