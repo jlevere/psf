@@ -47,4 +47,10 @@ Both parse surfaces (the PSTREAM header/scanner and the CIX XML manifest) take
 attacker-controlled input and are fuzzed with `cargo-fuzz`. The fuzz crate is a
 standalone workspace under `fuzz/` (excluded from the root workspace); enter the
 nightly shell with `nix develop .#fuzz`, seed with `./fuzz/seed_corpus.sh`, then
-`cargo fuzz run <fuzz_cix|fuzz_psf|fuzz_reader> -- -dict=fuzz/<cix|psf>.dict`.
+`cargo fuzz run <target>`. Targets are aggressive oracles, not panic checks:
+
+- `fuzz_cix_structured` -- generative: an `Arbitrary` CIX model (`fuzz/src/lib.rs`)
+  rendered to well-formed XML, round-trip-checked field-by-field against the parse.
+- `fuzz_cix` -- raw bytes, mutates real manifests (seed from `UUP_CIX`); `-dict=fuzz/cix.dict`.
+- `fuzz_psf` -- range oracle for the header/scanner; `-dict=fuzz/psf.dict`.
+- `fuzz_reader` -- differential: `PsfReader` must match in-memory `Psf` byte-for-byte.

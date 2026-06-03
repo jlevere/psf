@@ -71,9 +71,10 @@ ship inside an update), so they are fuzzed with `cargo-fuzz`:
 ```sh
 nix develop .#fuzz             # nightly + cargo-fuzz
 ./fuzz/seed_corpus.sh          # valid artifacts -> corpora
-cargo fuzz run fuzz_cix -- -dict=fuzz/cix.dict   # CIX XML parser
+cargo fuzz run fuzz_cix_structured               # generative CIX (round-trip oracle)
+cargo fuzz run fuzz_cix -- -dict=fuzz/cix.dict   # CIX XML parser (mutates real manifests)
 cargo fuzz run fuzz_psf -- -dict=fuzz/psf.dict   # PSTREAM header + scanner
-cargo fuzz run fuzz_reader -- -dict=fuzz/psf.dict
+cargo fuzz run fuzz_reader -- -dict=fuzz/psf.dict # reader vs in-memory (differential)
 ```
 
 Real `.psf`/CIX fixtures are git-ignored; fixture-backed tests skip when absent
