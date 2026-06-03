@@ -27,5 +27,32 @@ for file in cix.files() {
 # Ok::<(), psf::Error>(())
 ```
 
+## Large containers
+
+The example above borrows the whole `.psf`. For a local file too large to read
+into a `Vec`, `mmap` it and pass the mapping as `&[u8]`: the slice API is
+already lazy -- the OS pages in only the ranges you slice.
+
+When the source is not mappable (a network download, or a `.psf` embedded in an
+archive you read sequentially), enable the `io` feature for a `Read + Seek`
+adapter that pulls streams by range without holding the container in memory:
+
+```toml
+psf = { version = "0.1", features = ["io"] }
+```
+
+```rust
+# #[cfg(feature = "io")] {
+use std::fs::File;
+use psf::{PsfStream, reader::PsfReader};
+
+let mut psf = PsfReader::new(File::open("express.psf")?)?;
+let blob = psf.stream(PsfStream { offset: 128, length: 4595 })?; // PA30 delta or RAW
+# Ok::<(), psf::reader::ReadError>(())
+# }
+```
+
+The default build stays sans-IO; the adapter is opt-in.
+
 Consumed by [`uup`](https://github.com/jlevere/uup) and
 [`msu`](https://github.com/jlevere/msu). Licensed under MIT OR Apache-2.0.

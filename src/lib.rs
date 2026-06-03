@@ -12,9 +12,15 @@
 //!
 //! Sans-IO and zero-copy: `&[u8]` in, byte-slices out. Feed an extracted
 //! stream straight to `msdelta` to reconstruct the target file.
+//!
+//! For containers too large to hold in memory, enable the `io` feature and
+//! use [`reader::PsfReader`], a `Read + Seek` adapter that pulls streams by
+//! range on demand. The core stays sans-IO; the adapter is opt-in.
 #![forbid(unsafe_code)]
 
 pub mod cix;
+#[cfg(feature = "io")]
+pub mod reader;
 
 use thiserror::Error;
 

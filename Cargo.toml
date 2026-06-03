@@ -13,6 +13,13 @@ description = "Pure-Rust reader for Microsoft Patch Storage Files (PSTREAM / exp
 categories = ["parser-implementations", "os::windows-apis"]
 keywords = ["windows", "update", "psf", "express", "delta"]
 
+[features]
+# Default-off so the core stays sans-IO. Enables the `reader` module: a
+# `Read + Seek` adapter that pulls streams by range without holding the
+# whole container in memory. Adds no dependencies (std is already used).
+default = []
+io = []
+
 [dependencies]
 thiserror = "2"
 yaserde = "0.12"
