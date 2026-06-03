@@ -108,7 +108,7 @@ impl<R: Read + Seek> PsfReader<R> {
             .ok_or(Error::OutOfBounds {
                 offset: s.offset,
                 length: s.length,
-                size: self.len as usize,
+                size: self.len,
             })?;
         self.inner.seek(SeekFrom::Start(s.offset))?;
         buf.clear();

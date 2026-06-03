@@ -37,11 +37,7 @@ pub enum Error {
     #[error("truncated PSF: need {need} bytes, have {have}")]
     Truncated { need: usize, have: usize },
     #[error("stream range {offset}+{length} out of bounds (file is {size} bytes)")]
-    OutOfBounds {
-        offset: u64,
-        length: u64,
-        size: usize,
-    },
+    OutOfBounds { offset: u64, length: u64, size: u64 },
     #[error("CIX parse error: {0}")]
     Cix(String),
 }
@@ -105,7 +101,7 @@ impl<'a> Psf<'a> {
             .ok_or(Error::OutOfBounds {
                 offset: s.offset,
                 length: s.length,
-                size: self.data.len(),
+                size: self.data.len() as u64,
             })?;
         Ok(&self.data[off..end])
     }
