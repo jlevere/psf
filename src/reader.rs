@@ -223,6 +223,38 @@ mod tests {
         assert_eq!(buf, 2u16.to_le_bytes());
     }
 
+    #[test]
+    fn agrees_with_in_memory_parser_on_edges() {
+        use crate::Psf;
+
+        let data = synthetic();
+        let mem = Psf::parse(&data).unwrap();
+        let mut rdr = PsfReader::new(Cursor::new(data.clone())).unwrap();
+        assert_eq!(mem.version(), rdr.version());
+        assert_eq!(mem.len() as u64, rdr.len());
+
+        let len = rdr.len();
+        for (offset, length) in [
+            (0u64, 0u64),
+            (0, len),
+            (len, 0),
+            (len, 1),
+            (128, 64),
+            (u64::MAX, 1),
+        ] {
+            let s = PsfStream { offset, length };
+            match (mem.stream(s), rdr.stream(s)) {
+                (Ok(a), Ok(b)) => assert_eq!(a, &b[..], "bytes differ at {offset}+{length}"),
+                (Err(_), Err(_)) => {}
+                (a, b) => panic!(
+                    "ok/err differ at {offset}+{length}: mem={} rdr={}",
+                    a.is_ok(),
+                    b.is_ok()
+                ),
+            }
+        }
+    }
+
     // Real fixture: `UUP_PSF_FIXTURE=/path/to/x.psf cargo test -p psf --features io -- --nocapture`.
     #[test]
     fn real_psf_fixture() {

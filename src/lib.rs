@@ -188,6 +188,36 @@ mod tests {
         assert_eq!(psf.find_delta_blobs(), vec![128]);
     }
 
+    #[test]
+    fn stream_handles_boundary_and_overflow_ranges() {
+        let data = synthetic();
+        let psf = Psf::parse(&data).unwrap();
+        let len = psf.len() as u64;
+        // A zero-length read at EOF is valid and empty.
+        assert_eq!(
+            psf.stream(PsfStream {
+                offset: len,
+                length: 0
+            })
+            .unwrap(),
+            b""
+        );
+        // One byte past EOF is rejected, not a panic.
+        assert!(psf
+            .stream(PsfStream {
+                offset: len,
+                length: 1
+            })
+            .is_err());
+        // offset + length overflowing u64 is rejected, not a panic.
+        assert!(psf
+            .stream(PsfStream {
+                offset: u64::MAX,
+                length: 1
+            })
+            .is_err());
+    }
+
     // Real fixture: `UUP_PSF_FIXTURE=/path/to/x.psf cargo test -p psf -- --nocapture`.
     #[test]
     fn real_psf_fixture() {
