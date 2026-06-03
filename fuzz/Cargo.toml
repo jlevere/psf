@@ -1,0 +1,41 @@
+[package]
+name = "psf-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+# Stand alone as its own workspace: depending on the parent `psf` crate by path
+# would otherwise pull this fuzz crate into psf's workspace.
+[workspace]
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.psf]
+path = ".."
+# The reader target needs the Read+Seek adapter.
+features = ["io"]
+
+[[bin]]
+name = "fuzz_psf"
+path = "fuzz_targets/fuzz_psf.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_cix"
+path = "fuzz_targets/fuzz_cix.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_reader"
+path = "fuzz_targets/fuzz_reader.rs"
+test = false
+doc = false
+bench = false

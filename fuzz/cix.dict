@@ -1,0 +1,39 @@
+# libFuzzer dictionary for the CIX XML target (fuzz_cix). Element and attribute
+# names from express.psf.cix.xml so the mutator builds structurally valid
+# manifests instead of rediscovering the schema. Pass it explicitly:
+#   cargo fuzz run fuzz_cix -- -dict=fuzz/cix.dict
+
+# Namespace and document prolog.
+ns="urn:ContainerIndex"
+prolog="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+
+# Elements.
+e_container="<Container"
+e_files="<Files"
+e_file="<File"
+e_delta="<Delta"
+e_source="<Source"
+e_hash="<Hash"
+e_dbs="<DeltaBasisSearch"
+e_location="<Location"
+
+# Attributes.
+a_xmlns=" xmlns="
+a_type=" type="
+a_offset=" offset="
+a_length=" length="
+a_name=" name="
+a_id=" id="
+a_time=" time="
+a_attr=" attr="
+a_alg=" alg="
+a_value=" value="
+a_path=" path="
+a_flags=" flags="
+a_version=" version="
+
+# Source kinds and hash algorithm.
+val_pa30="PA30"
+val_pa31="PA31"
+val_raw="RAW"
+val_sha256="SHA256"

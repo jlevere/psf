@@ -1,5 +1,7 @@
 [workspace]
 resolver = "2"
+# `fuzz` is its own standalone workspace (cargo-fuzz); keep it out of this one.
+exclude = ["fuzz"]
 
 [package]
 name = "psf"

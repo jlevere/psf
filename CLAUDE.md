@@ -42,3 +42,9 @@ nix develop
 cargo build
 cargo nextest run
 ```
+
+Both parse surfaces (the PSTREAM header/scanner and the CIX XML manifest) take
+attacker-controlled input and are fuzzed with `cargo-fuzz`. The fuzz crate is a
+standalone workspace under `fuzz/` (excluded from the root workspace); enter the
+nightly shell with `nix develop .#fuzz`, seed with `./fuzz/seed_corpus.sh`, then
+`cargo fuzz run <fuzz_cix|fuzz_psf|fuzz_reader> -- -dict=fuzz/<cix|psf>.dict`.

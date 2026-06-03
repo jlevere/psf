@@ -1,0 +1,15 @@
+# libFuzzer dictionary for the PSTREAM byte-parsing targets (fuzz_psf,
+# fuzz_reader). Gets the mutator past the magic gates it would otherwise spend
+# enormous effort rediscovering. Pass it explicitly:
+#   cargo fuzz run fuzz_psf -- -dict=fuzz/psf.dict
+# (cargo-fuzz does not auto-load dictionaries.)
+# Format: https://llvm.org/docs/LibFuzzer.html#dictionaries
+
+# Container magic (8 bytes, NUL-terminated) and a plausible (2, 2) version.
+magic_pstream="PSTREAM\x00"
+version_2_2="\x02\x00\x02\x00"
+
+# MSDelta stream magics the scanner looks for.
+magic_pa30="PA30"
+magic_pa31="PA31"
+magic_pa19="PA19"

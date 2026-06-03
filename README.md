@@ -1,5 +1,8 @@
 # psf
 
+[![CI](https://github.com/jlevere/psf/actions/workflows/ci.yml/badge.svg)](https://github.com/jlevere/psf/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
+
 Pure-Rust reader for Microsoft **PSTREAM** Patch Storage Files -- the "express
 download" payload container used by Windows Update (LCU `.psf`, FoD `.psf`, MSU
 PSTREAM) -- and their paired **Container Index** (`*.psf.cix.xml`).
@@ -54,5 +57,32 @@ let blob = psf.stream(PsfStream { offset: 128, length: 4595 })?; // PA30 delta o
 
 The default build stays sans-IO; the adapter is opt-in.
 
+## Development
+
+```sh
+nix develop          # stable toolchain + cargo-nextest
+cargo build
+cargo nextest run    # or: cargo test --all-features
+```
+
+The parsers run on attacker-controlled input (the `.psf` and its CIX manifest
+ship inside an update), so they are fuzzed with `cargo-fuzz`:
+
+```sh
+nix develop .#fuzz             # nightly + cargo-fuzz
+./fuzz/seed_corpus.sh          # valid artifacts -> corpora
+cargo fuzz run fuzz_cix -- -dict=fuzz/cix.dict   # CIX XML parser
+cargo fuzz run fuzz_psf -- -dict=fuzz/psf.dict   # PSTREAM header + scanner
+cargo fuzz run fuzz_reader -- -dict=fuzz/psf.dict
+```
+
+Real `.psf`/CIX fixtures are git-ignored; fixture-backed tests skip when absent
+(`UUP_PSF_FIXTURE`, `UUP_CIX`).
+
+## License
+
+Licensed under either of [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE) at
+your option.
+
 Consumed by [`uup`](https://github.com/jlevere/uup) and
-[`msu`](https://github.com/jlevere/msu). Licensed under MIT OR Apache-2.0.
+[`msu`](https://github.com/jlevere/msu).
