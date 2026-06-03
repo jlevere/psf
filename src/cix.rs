@@ -13,8 +13,6 @@ use yaserde_derive::YaDeserialize;
 
 use crate::{Error, PsfStream, Result};
 
-const CI: &str = "urn:ContainerIndex";
-
 /// A digest from the CIX (typically SHA256).
 #[derive(YaDeserialize, Default, Debug, Clone, PartialEq, Eq)]
 #[yaserde(rename = "Hash", prefix = "ci", default_namespace = "ci", namespaces = { "ci" = "urn:ContainerIndex" })]
@@ -140,7 +138,6 @@ pub struct ContainerIndex {
 impl ContainerIndex {
     /// Parse a CIX (`express.psf.cix.xml`) document.
     pub fn parse(xml: &str) -> Result<Self> {
-        let _ = CI;
         yaserde::de::from_str(xml).map_err(Error::Cix)
     }
 
@@ -193,14 +190,26 @@ mod tests {
         let sa = a.source().unwrap();
         assert!(sa.is_delta());
         assert_eq!(sa.kind, "PA30");
-        assert_eq!(a.psf_stream(), Some(PsfStream { offset: 3276800, length: 4595 }));
+        assert_eq!(
+            a.psf_stream(),
+            Some(PsfStream {
+                offset: 3276800,
+                length: 4595
+            })
+        );
         assert_eq!(sa.hash.as_ref().unwrap().value, "CCDD");
 
         let b = &files[1];
         let sb = b.source().unwrap();
         assert!(!sb.is_delta());
         assert_eq!(sb.kind, "RAW");
-        assert_eq!(b.psf_stream(), Some(PsfStream { offset: 100, length: 5 }));
+        assert_eq!(
+            b.psf_stream(),
+            Some(PsfStream {
+                offset: 100,
+                length: 5
+            })
+        );
     }
 
     // Real CIX: `UUP_CIX=/path/to/express.psf.cix.xml cargo test -p psf -- --nocapture`.
@@ -213,8 +222,14 @@ mod tests {
         let xml = std::fs::read_to_string(path).unwrap();
         let cix = ContainerIndex::parse(&xml).unwrap();
         let files = cix.files();
-        let raw = files.iter().filter(|f| f.source().is_some_and(|s| !s.is_delta())).count();
-        let delta = files.iter().filter(|f| f.source().is_some_and(|s| s.is_delta())).count();
+        let raw = files
+            .iter()
+            .filter(|f| f.source().is_some_and(|s| !s.is_delta()))
+            .count();
+        let delta = files
+            .iter()
+            .filter(|f| f.source().is_some_and(|s| s.is_delta()))
+            .count();
         eprintln!(
             "container={:?} baseless={} files={} (raw={raw} delta={delta})",
             cix.name,
@@ -222,6 +237,8 @@ mod tests {
             files.len()
         );
         assert!(!files.is_empty());
-        assert!(files.iter().all(|f| f.hash.is_some() && f.psf_stream().is_some()));
+        assert!(files
+            .iter()
+            .all(|f| f.hash.is_some() && f.psf_stream().is_some()));
     }
 }

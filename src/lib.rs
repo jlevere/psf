@@ -148,19 +148,33 @@ mod tests {
 
     #[test]
     fn rejects_bad_magic_and_truncation() {
-        assert_eq!(Psf::parse(b"NOTPSF\0\0\x02\x00\x02\x00").unwrap_err(), Error::BadMagic);
-        assert!(matches!(Psf::parse(b"PSTRE").unwrap_err(), Error::Truncated { .. }));
+        assert_eq!(
+            Psf::parse(b"NOTPSF\0\0\x02\x00\x02\x00").unwrap_err(),
+            Error::BadMagic
+        );
+        assert!(matches!(
+            Psf::parse(b"PSTRE").unwrap_err(),
+            Error::Truncated { .. }
+        ));
     }
 
     #[test]
     fn extracts_stream_by_range_and_bounds_checks() {
         let data = synthetic();
         let psf = Psf::parse(&data).unwrap();
-        let blob = psf.stream(PsfStream { offset: 128, length: 64 }).unwrap();
+        let blob = psf
+            .stream(PsfStream {
+                offset: 128,
+                length: 64,
+            })
+            .unwrap();
         assert_eq!(&blob[..4], b"PA30");
         assert_eq!(blob.len(), 64);
         assert!(matches!(
-            psf.stream(PsfStream { offset: 128, length: 1 << 20 }),
+            psf.stream(PsfStream {
+                offset: 128,
+                length: 1 << 20
+            }),
             Err(Error::OutOfBounds { .. })
         ));
     }
@@ -182,11 +196,23 @@ mod tests {
         let data = std::fs::read(path).unwrap();
         let psf = Psf::parse(&data).unwrap();
         let blobs = psf.find_delta_blobs();
-        eprintln!("version={:?} size={} delta-blobs~={}", psf.version(), psf.len(), blobs.len());
+        eprintln!(
+            "version={:?} size={} delta-blobs~={}",
+            psf.version(),
+            psf.len(),
+            blobs.len()
+        );
         assert_eq!(psf.version(), (2, 2));
         assert!(!blobs.is_empty());
         // First stream begins right after the 128-byte header.
         assert_eq!(blobs[0], 128);
-        assert_eq!(&psf.stream(PsfStream { offset: blobs[0], length: 4 }).unwrap(), b"PA30");
+        assert_eq!(
+            &psf.stream(PsfStream {
+                offset: blobs[0],
+                length: 4
+            })
+            .unwrap(),
+            b"PA30"
+        );
     }
 }
