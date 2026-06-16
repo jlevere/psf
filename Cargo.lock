@@ -93,7 +93,7 @@ checksum = "113b30b4cd05f7c06868fdb2854f66a7b9fece9a48425351cd532e810d74024f"
 [[package]]
 name = "lzms"
 version = "0.1.0"
-source = "git+ssh://git@github.com/jlevere/msdelta?rev=fb5ab88843e854f3fd32d553984d8685ae643913#fb5ab88843e854f3fd32d553984d8685ae643913"
+source = "git+https://github.com/jlevere/msdelta?rev=fb5ab88843e854f3fd32d553984d8685ae643913#fb5ab88843e854f3fd32d553984d8685ae643913"
 
 [[package]]
 name = "lzxd"
@@ -114,7 +114,7 @@ dependencies = [
 [[package]]
 name = "msdelta"
 version = "0.1.0"
-source = "git+ssh://git@github.com/jlevere/msdelta?rev=fb5ab88843e854f3fd32d553984d8685ae643913#fb5ab88843e854f3fd32d553984d8685ae643913"
+source = "git+https://github.com/jlevere/msdelta?rev=fb5ab88843e854f3fd32d553984d8685ae643913#fb5ab88843e854f3fd32d553984d8685ae643913"
 dependencies = [
  "digest",
  "goblin",

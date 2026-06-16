@@ -33,7 +33,7 @@ yaserde = "0.12"
 yaserde_derive = "0.12"
 # `expand` feature only. Pinned to msdelta main (the same rev every consumer
 # pins, so Cargo unifies to one copy).
-msdelta = { git = "ssh://git@github.com/jlevere/msdelta", rev = "fb5ab88843e854f3fd32d553984d8685ae643913", default-features = false, optional = true }
+msdelta = { git = "https://github.com/jlevere/msdelta", rev = "fb5ab88843e854f3fd32d553984d8685ae643913", default-features = false, optional = true }
 sha2 = { version = "0.11", optional = true }
 
 [profile.release]
