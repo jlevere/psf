@@ -19,6 +19,8 @@
 #![forbid(unsafe_code)]
 
 pub mod cix;
+#[cfg(feature = "expand")]
+pub mod expand;
 #[cfg(feature = "io")]
 pub mod reader;
 
