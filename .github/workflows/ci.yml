@@ -22,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The `expand` feature pulls the public `msdelta` via an ssh:// git pin
+      # (kept ssh:// so the rev unifies with msu's pin). Fetch it anonymously.
+      - run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --workspace --all-features
 
@@ -50,6 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -60,5 +64,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
       - uses: dtolnay/rust-toolchain@1.85
       - run: cargo check --all-targets --all-features
