@@ -30,6 +30,11 @@ pub enum ExpandError {
     /// `msdelta` failed to apply the delta.
     #[error("{name}: msdelta apply: {msg}")]
     Apply { name: String, msg: String },
+    /// A non-RAW, non-delta source (e.g. a WIM-fragment LZX/XPRESS/LZMS stream,
+    /// `dpx!PsfExpandWimFragment`) we don't decode -- fail loud rather than
+    /// mis-copy the compressed bytes as verbatim.
+    #[error("{name}: unsupported source type {kind:?} (only RAW and PA30/PA31)")]
+    UnsupportedSource { name: String, kind: String },
     /// Reconstructed bytes did not match the CIX target hash/length.
     #[error("{name}: reconstructed bytes do not match CIX target hash/length")]
     TargetMismatch { name: String },
@@ -68,8 +73,14 @@ pub fn reconstruct(psf: &Psf, file: &File, basis: &[u8]) -> Result<Vec<u8>> {
             name: file.name.clone(),
             msg: e.to_string(),
         })
-    } else {
+    } else if source.kind.eq_ignore_ascii_case("RAW") {
+        // RAW: the source range is the file, stored verbatim.
         Ok(stream.to_vec())
+    } else {
+        Err(ExpandError::UnsupportedSource {
+            name: file.name.clone(),
+            kind: source.kind.clone(),
+        })
     }
 }
 
